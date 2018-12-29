@@ -661,23 +661,23 @@ describe('originBlacklist', function() {
       .expect(200, done);
   });
 
-  it('GET /example.com with denied origin in referer', function(done) {
+  it('GET /example.com with denied origin in x-requested-with', function(done) {
     request(cors_anywhere)
       .get('/example.com/')
-      .set('Referer', 'http://denied.origin.test')
+      .set('X-Requested-With', 'http://denied.origin.test')
       .expect('Access-Control-Allow-Origin', '*')
       .expect(403, done);
   });
 
-  it('GET /example.com without denied origin in referer', function(done) {
+  it('GET /example.com without denied origin in x-requested-with', function(done) {
     request(cors_anywhere)
       .get('/example.com/')
-      .set('Referer', 'https://denied.origin.test') // Note: different scheme!
+      .set('X-Requested-With', 'https://denied.origin.test') // Note: different scheme!
       .expect('Access-Control-Allow-Origin', '*')
       .expect(200, done);
   });
 
-  it('GET /example.com without origin and referer', function(done) {
+  it('GET /example.com without origin and x-requested-with', function(done) {
     request(cors_anywhere)
       .get('/example.com/')
       .expect('Access-Control-Allow-Origin', '*')
@@ -710,23 +710,23 @@ describe('originWhitelist', function() {
       .expect(403, done);
   });
 
-  it('GET /example.com with permitted origin in referer', function(done) {
+  it('GET /example.com with permitted origin in x-requested-with', function(done) {
     request(cors_anywhere)
       .get('/example.com/')
-      .set('Referer', 'https://permitted.origin.test')
+      .set('X-Requested-With', 'https://permitted.origin.test')
       .expect('Access-Control-Allow-Origin', '*')
       .expect(200, done);
   });
 
-  it('GET /example.com without permitted origin in referer', function(done) {
+  it('GET /example.com without permitted origin in x-requested-with', function(done) {
     request(cors_anywhere)
       .get('/example.com/')
-      .set('Referer', 'http://permitted.origin.test') // Note: different scheme!
+      .set('X-Requested-With', 'http://permitted.origin.test') // Note: different scheme!
       .expect('Access-Control-Allow-Origin', '*')
       .expect(403, done);
   });
 
-  it('GET /example.com without origin and referer', function(done) {
+  it('GET /example.com without origin and x-requested-with', function(done) {
     request(cors_anywhere)
       .get('/example.com/')
       .expect('Access-Control-Allow-Origin', '*')
@@ -811,7 +811,7 @@ describe('checkRateLimit', function() {
       .expect(429, 'The origin "http://example.net:1234" has sent too many requests.\n[http://example.net:1234]', done);
   });
 
-  it('GET /example.com with rate-limit with referer fallback', function(done) {
+  it('GET /example.com with rate-limit with x-requested-with fallback', function(done) {
     cors_anywhere = createServer({
       checkRateLimit: function(origin) {
         // Non-empty value. Let's return the origin parameter so that we also verify that the
@@ -822,7 +822,7 @@ describe('checkRateLimit', function() {
     cors_anywhere_port = cors_anywhere.listen(0).address().port;
     request(cors_anywhere)
       .get('/example.com/')
-      .set('Referer', 'http://example.net:1234')
+      .set('X-Requested-With', 'http://example.net:1234')
       .expect('Access-Control-Allow-Origin', '*')
       .expect(429, 'The origin "http://example.net:1234" has sent too many requests.\n[http://example.net:1234]', done);
   });
@@ -902,10 +902,10 @@ describe('redirectSameOrigin', function() {
       .expect(200, 'Response from prefix.example.com', done);
   });
 
-  it('GET /example.com with Referer: http://example.com', function(done) {
+  it('GET /example.com with X-Requested-With: http://example.com', function(done) {
     request(cors_anywhere)
       .get('/example.com/')
-      .set('Referer', 'http://example.com')
+      .set('X-Requested-With', 'http://example.com')
       .expect('Access-Control-Allow-Origin', '*')
       .expect('Cache-Control', 'private')
       .expect('Vary', 'origin')
@@ -913,56 +913,56 @@ describe('redirectSameOrigin', function() {
       .expect(301, done);
   });
 
-  it('GET /example.com with Referer: https://example.com', function(done) {
+  it('GET /example.com with X-Requested-With: https://example.com', function(done) {
     // Not same-origin because of different schemes.
     request(cors_anywhere)
       .get('/example.com/')
-      .set('Referer', 'https://example.com')
+      .set('X-Requested-With', 'https://example.com')
       .expect('Access-Control-Allow-Origin', '*')
       .expect(200, 'Response from example.com', done);
   });
 
-  it('GET /example.com with Referer: http://example.com:1234', function(done) {
+  it('GET /example.com with X-Requested-With: http://example.com:1234', function(done) {
     // Not same-origin because of different ports.
     request(cors_anywhere)
       .get('/example.com/')
-      .set('Referer', 'http://example.com:1234')
+      .set('X-Requested-With', 'http://example.com:1234')
       .expect('Access-Control-Allow-Origin', '*')
       .expect(200, 'Response from example.com', done);
   });
 
-  it('GET /example.com:1234 with Referer: http://example.com', function(done) {
+  it('GET /example.com:1234 with X-Requested-With: http://example.com', function(done) {
     // Not same-origin because of different ports.
     request(cors_anywhere)
       .get('/example.com:1234/')
-      .set('Referer', 'http://example.com')
+      .set('X-Requested-With', 'http://example.com')
       .expect('Access-Control-Allow-Origin', '*')
       .expect(200, 'Response from example.com:1234', done);
   });
 
-  it('GET /example.com with Referer: http://example.com.test', function(done) {
+  it('GET /example.com with X-Requested-With: http://example.com.test', function(done) {
     // Not same-origin because of different host names.
     request(cors_anywhere)
       .get('/example.com/')
-      .set('Referer', 'http://example.com.test')
+      .set('X-Requested-With', 'http://example.com.test')
       .expect('Access-Control-Allow-Origin', '*')
       .expect(200, 'Response from example.com', done);
   });
 
-  it('GET /example.com.com with Referer: http://example.com', function(done) {
+  it('GET /example.com.com with X-Requested-With: http://example.com', function(done) {
     // Not same-origin because of different host names.
     request(cors_anywhere)
       .get('/example.com.com/')
-      .set('Referer', 'http://example.com')
+      .set('X-Requested-With', 'http://example.com')
       .expect('Access-Control-Allow-Origin', '*')
       .expect(200, 'Response from example.com.com', done);
   });
 
-  it('GET /prefix.example.com with Referer: http://example.com', function(done) {
+  it('GET /prefix.example.com with X-Requested-With: http://example.com', function(done) {
     // Not same-origin because of different host names.
     request(cors_anywhere)
       .get('/prefix.example.com/')
-      .set('Referer', 'http://example.com')
+      .set('X-Requested-With', 'http://example.com')
       .expect('Access-Control-Allow-Origin', '*')
       .expect(200, 'Response from prefix.example.com', done);
   });
@@ -971,7 +971,7 @@ describe('redirectSameOrigin', function() {
 describe('requireHeader', function() {
   before(function() {
     cors_anywhere = createServer({
-      requireHeader: ['origin', 'x-requested-with', 'referer'],
+      requireHeader: ['origin', 'x-requested-with'],
     });
     cors_anywhere_port = cors_anywhere.listen(0).address().port;
   });
@@ -981,7 +981,7 @@ describe('requireHeader', function() {
     request(cors_anywhere)
       .get('/example.com/')
       .expect('Access-Control-Allow-Origin', '*')
-      .expect(400, 'Missing required request header. Must specify one of: origin,x-requested-with,referer', done);
+      .expect(400, 'Missing required request header. Must specify one of: origin,x-requested-with', done);
   });
 
   it('GET /example.com with X-Requested-With header', function(done) {
@@ -1000,10 +1000,10 @@ describe('requireHeader', function() {
       .expect(200, done);
   });
 
-  it('GET /example.com with Referer header', function(done) {
+  it('GET /example.com with X-Requested-With header', function(done) {
     request(cors_anywhere)
       .get('/example.com/')
-      .set('Referer', 'null')
+      .set('X-Requested-With', 'null')
       .expect('Access-Control-Allow-Origin', '*')
       .expect(200, done);
   });
@@ -1403,48 +1403,5 @@ describe('helpFile', function() {
       .type('text/plain')
       .expect('Access-Control-Allow-Origin', '*')
       .expect(500, '', done);
-  });
-});
-
-describe('handle Referer header formats to match Origin header format', function() {
-  before(function() {
-    cors_anywhere = createServer({
-      requireHeader: ['referer'],
-      originWhitelist: 'http://example.com',
-    });
-    cors_anywhere_port = cors_anywhere.listen(0).address().port;
-  });
-  after(stopServer);
-
-  it('GET /example.com with referer having an invalid format', function(done) {
-    request(cors_anywhere)
-      .get('/example.com/')
-      .set('Referer', 'ht://example.com')
-      .expect('Access-Control-Allow-Origin', '*')
-      .expect(403, 'The origin "ht://example.com" was not whitelisted by the operator of this proxy.', done);
-  });
-
-  it('GET /example.com with referer having the same format as Origin', function(done) {
-    request(cors_anywhere)
-      .get('/example.com/')
-      .set('Referer', 'http://example.com')
-      .expect('Access-Control-Allow-Origin', '*')
-      .expect(200, done);
-  });
-
-  it('GET /example.com with referer having a trailing /', function(done) {
-    request(cors_anywhere)
-      .get('/example.com/')
-      .set('Referer', 'http://example.com/')
-      .expect('Access-Control-Allow-Origin', '*')
-      .expect(200, done);
-  });
-
-  it('GET /example.com with referer having the full application path', function(done) {
-    request(cors_anywhere)
-      .get('/example.com/')
-      .set('Referer', 'http://example.com/path/to/app')
-      .expect('Access-Control-Allow-Origin', '*')
-      .expect(200, done);
   });
 });
