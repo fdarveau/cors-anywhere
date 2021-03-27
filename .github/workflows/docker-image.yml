@@ -20,8 +20,8 @@ jobs:
       - name: 'Build:dockerimage'
         uses: docker/build-push-action@v2.3.0
         with:
-          registry: ghcr.io
+          #registry: ghcr.io
           #username: "fdarveau"
           #password: ${{ secrets.PAT }}
           #repository: fdarveau/cors-anywhere
-          tags: fdarveau/cors-anywhere:${{ steps.date.outputs.date }},fdarveau/cors-anywhere:latest
+          tags: ghcr.io/fdarveau/cors-anywhere:${{ steps.date.outputs.date }},ghcr.io/fdarveau/cors-anywhere:latest
