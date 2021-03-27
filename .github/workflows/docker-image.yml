@@ -7,11 +7,8 @@ on:
     branches: [ docker ]
 
 jobs:
-
   build:
-
     runs-on: ubuntu-latest
-
     steps:
       - name: Get current date
         id: date
