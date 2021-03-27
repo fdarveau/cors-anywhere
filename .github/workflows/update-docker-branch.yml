@@ -1,0 +1,16 @@
+name: PR for docker branch
+on:
+  push:
+    branches:
+      - master
+jobs:
+  release_pull_request:
+    runs-on: ubuntu-latest
+    name: release_pull_request
+    steps:
+    - name: checkout
+      uses: actions/checkout@v2
+    - name: Create PR to branch
+      uses: fdarveau/cors-anywhere@master
+      with:
+        pr_branch: 'docker'
