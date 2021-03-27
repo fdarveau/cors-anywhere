@@ -12,7 +12,12 @@ jobs:
 
     runs-on: ubuntu-latest
 
-    steps:
-    - uses: actions/checkout@v2
-    - name: Build the Docker image
-      run: docker build . --file Dockerfile --tag cors-anywhere:$(date +%s)
+    steps:        
+      - name: 'Build:dockerimage'
+        uses: docker/build-push-action@v2.3.0
+        with:
+          registry: ghcr.io
+          #username: "fdarveau"
+          #password: ${{ secrets.PAT }}
+          #repository: fdarveau/cors-anywhere
+          tags: fdarveau/cors-anywhere:$(date +%s),fdarveau/cors-anywhere:latest
