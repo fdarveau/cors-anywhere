@@ -12,7 +12,11 @@ jobs:
 
     runs-on: ubuntu-latest
 
-    steps:        
+    steps:
+      - name: Get current date
+        id: date
+        run: echo "::set-output name=date::$(date +'%Y-%m-%d')"
+        
       - name: 'Build:dockerimage'
         uses: docker/build-push-action@v2.3.0
         with:
@@ -20,4 +24,4 @@ jobs:
           #username: "fdarveau"
           #password: ${{ secrets.PAT }}
           #repository: fdarveau/cors-anywhere
-          tags: fdarveau/cors-anywhere:$(date +%s),fdarveau/cors-anywhere:latest
+          tags: fdarveau/cors-anywhere:${{ steps.date.outputs.date }},fdarveau/cors-anywhere:latest
